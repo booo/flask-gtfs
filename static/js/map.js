@@ -9,11 +9,7 @@ var initMap = function initMap() {
     map.setView(new L.LatLng(52.52, 13.41),13);
     map.addLayer(osm);
 
-    $.getJSON('./api/stops?asGeoJSON=true', function(featureCollection){
-        console.log(featureCollection);
-        featureCollection.features.forEach(function(feature){ 
-            console.log(feature.geometry.coordinates);
-        });
+    $.getJSON('./api/stops?asGeoJSON=true&bbox=13.0882097323,52.3418234221,13.7606105539,52.6697240587', function(featureCollection){
         L.geoJson(featureCollection).addTo(map);
     });
 };
