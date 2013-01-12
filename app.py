@@ -86,7 +86,15 @@ def api_stops_id(id):
 
 @app.route('/api/trips')
 def api_trips():
-    trips = Trip.query.all()
+    trips = None
+    q = request.args.get('q')
+    if q:
+        trips = Trip.query.filter(or_(
+            Trip.headsign.like("%" + q + "%"),
+            Trip.short_name.like("%" + q + "%")
+            )).all()
+    else:
+        trips = Trip.query.all()
     return jsonify(trips = toDictList(trips))
 
 @app.route('/api/trips/<int:id>')
