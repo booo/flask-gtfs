@@ -189,3 +189,27 @@ class StopTime(db.Model):
         self.departure_time = departure_time
         self.stop_id = stop_id
         self.stop_sequence = stop_sequence
+
+
+class Shape(db.Model):
+
+    id = db.Column(db.BigInteger, primary_key=True)
+    geometry = GeometryColumn(Geometry())
+
+    def __init__(self, id, geometry=None):
+        self.id = id
+        self.geometry = geometry
+
+    def toDict(self):
+        return { 'id': self.id }
+
+    def toGeoJSONDict(self):
+        return {
+            'type': 'Feature',
+            'id': self.id,
+            'geometry': {
+                'type': 'LineString',
+                'coordinates': self.geometry.coords(db.session)
+                },
+            }
+

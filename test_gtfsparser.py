@@ -1,5 +1,5 @@
 from gtfsparser import AgencyParser, StopParser, RouteParser, TripParser, \
-    TransferParser, StopTimeParser
+    TransferParser, StopTimeParser, ShapeParser
 
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -57,3 +57,8 @@ print("Done with transfers after {} milliseconds.".format(time() - start))
 #    db.session.commit()
 #
 #print("Done with stop times.")
+
+shapeParser = ShapeParser('./data/shapes.txt')
+for shape in shapeParser.parse():
+    db.session.add(shape)
+    db.session.commit()

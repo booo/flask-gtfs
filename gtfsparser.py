@@ -2,7 +2,9 @@
 import csv
 from datetime import datetime
 
-from models import Agency, Stop, Route, Trip, StopTime, Transfer
+from models import Agency, Stop, Route, Trip, StopTime, Transfer, Shape
+
+from geoalchemy import WKTSpatialElement
 
 import codecs, cStringIO
 
@@ -136,3 +138,36 @@ class StopTimeParser(object):
                 #        "%H:%M:%S").time()
                 yield StopTime(trip_id, arrival_time, departure_time, stop_id, \
                         stop_sequence)
+
+def pointsToLineString(points):
+    return "LINESTRING({})".format(
+            ",".join(["{} {}".format(lat, lon) for lat, lon in points ])
+            )
+
+class ShapeParser(object):
+
+    def __init__(self, filename):
+        self.filename = filename
+
+    def parse(self):
+        with open(self.filename, 'rb') as file:
+            reader = UnicodeReader(file)
+            columns = reader.next()
+
+            shape_id, lat, lon, seq = reader.next()
+            shape = Shape(shape_id)
+
+            points = [(lat, lon)]
+
+            for line in reader:
+                shape_id, lat, lon, seq = line
+                if shape_id != shape.id:
+                    shape.geometry = \
+                        WKTSpatialElement(pointsToLineString(points))
+                    yield shape
+                    shape = Shape(shape_id)
+                    points = [(lat, lon)]
+                else:
+                    points.append((lat, lon))
+
+

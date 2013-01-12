@@ -42,6 +42,27 @@ def api_agencies_id(id):
     else:
         return jsonify(error="Agency not found."), 404
 
+
+@app.route('/api/shapes')
+def api_shapes():
+
+    shapes = None
+
+    bbox = request.args.get('bbox')
+    if bbox:
+        east, north, west, south = bbox.split(",")
+        #TODO remove sql injection?
+        bbox = "POLYGON(({} {}, {} {}, {} {}, {} {}, {} {}))".format(north, east, \
+                north, west, south, west, south, east, north, east)
+        shapes = Shape.query.filter(Shape.geometry.intersects(bbox))
+    else:
+        shapes = Shape.query.all()
+
+    if request.args.get('asGeoJSON'):
+        return jsonify(toGeoJSONFeatureCollectionDict(shapes))
+    else:
+        return jsonify(shapes = toDictList(shapes))
+
 # stops
 
 @app.route('/api/stops')
@@ -62,7 +83,7 @@ def api_stops():
         app.logger.debug(bbox)
         stops = Stop.query.filter(Stop.geometry.intersects(bbox))
     else:
-        stops = Stop.query.all().limt(100)
+        stops = Stop.query.all()
 
     if request.args.get('asGeoJSON'):
         return jsonify(toGeoJSONFeatureCollectionDict(stops))
