@@ -42,6 +42,7 @@ def api_agencies_id(id):
     else:
         return jsonify(error="Agency not found."), 404
 
+# shapes
 
 @app.route('/api/shapes')
 def api_shapes():
@@ -62,6 +63,19 @@ def api_shapes():
         return jsonify(toGeoJSONFeatureCollectionDict(shapes))
     else:
         return jsonify(shapes = toDictList(shapes))
+
+@app.route('/api/shapes/<int:id>')
+def api_shapes_id(id):
+
+    shape = Shape.query.filter(Shape.id == id).first()
+
+    if shape:
+        if request.args.get('asGeoJSON'):
+            return jsonify(shape.toGeoJSONDict())
+        else:
+            return jsonify(shape.toDict())
+    else:
+        return jsonify(error="Shape not found."), 404
 
 # stops
 
