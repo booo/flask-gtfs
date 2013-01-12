@@ -44,7 +44,19 @@ def api_agencies_id(id):
 
 @app.route('/api/stops')
 def api_stops():
-    stops = Stop.query.limit(100)
+
+    stops = None
+
+    bbox = request.args.get('bbox')
+    if bbox:
+        east, north, west, south = bbox.split(",")
+        stops = Stop.query.filter(
+            Stop.lon.between(float(east),float(west)),
+            Stop.lat.between(float(north), float(south)),
+                ).limit(500)
+    else:
+        stops = Stop.query.all().limt(100)
+
     if request.args.get('asGeoJSON'):
         return jsonify(toGeoJSONFeatureCollectionDict(stops))
     else:
@@ -52,7 +64,9 @@ def api_stops():
 
 @app.route('/api/stops/<int:id>')
 def api_stops_id(id):
+
     stop = Stop.query.filter(Stop.id == id).first()
+
     if stop:
         if request.args.get('asGeoJSON'):
             return jsonify(stop.toGeoJSONDict())
