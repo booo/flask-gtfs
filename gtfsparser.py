@@ -6,6 +6,12 @@ from models import Agency, Stop, Route, Trip, StopTime, Transfer
 
 import codecs, cStringIO
 
+def stringToInt(s):
+    if s != '':
+        return int(s)
+    else:
+        return None
+
 class UTF8Recorder:
 
     def __init__(self, f, encoding):
@@ -57,6 +63,7 @@ class StopParser(object):
             for line in reader:
                 id, code, name, desc, lat, lon, type, parent_station = \
                     line
+                parent_station = stringToInt(parent_station)
                 yield Stop(id, code, name, desc, lat, lon, type, parent_station)
 
 class RouteParser(object):
@@ -87,6 +94,9 @@ class TripParser(object):
             for line in reader:
                 route_id, service_id, id, headsign, short_name, direction_id, \
                 block_id, shape_id = line
+                direction_id = stringToInt(direction_id)
+                block_id = stringToInt(block_id)
+                shape_id = stringToInt(shape_id)
                 yield Trip(route_id, service_id, id, headsign, short_name, \
                         direction_id, block_id, shape_id)
 
@@ -103,6 +113,7 @@ class TransferParser(object):
             for line in reader:
                 from_stop_id, to_stop_id, type, min_transfer_time = \
                     line
+                min_transfer_time = stringToInt(min_transfer_time)
                 yield Transfer(from_stop_id, to_stop_id, type, \
                         min_transfer_time)
 

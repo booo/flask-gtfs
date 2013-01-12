@@ -2,11 +2,12 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
+from geoalchemy import GeometryColumn, Point, WKTSpatialElement, Geometry
+
 import os
 
 app = Flask(__name__, instance_relative_config=True)
-db_path = os.path.expanduser('./gtfs.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:testing@localhost/postgres'
 db = SQLAlchemy(app)
 
 class Agency(db.Model):
@@ -36,20 +37,22 @@ class Agency(db.Model):
 
 class Stop(db.Model):
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     code = db.Column(db.String(256))
     name = db.Column(db.String(256))
     desc = db.Column(db.String(256))
+    geometry = GeometryColumn(Geometry())
     lat =  db.Column(db.Float)
     lon = db.Column(db.Float)
     type = db.Column(db.Integer)
-    parent_station = db.Column(db.Integer)
+    parent_station = db.Column(db.BigInteger)
 
-    def __init__(self, id, code, name, desc, lat, lon, type, parent_station):
+    def __init__(self, id, code, name, desc, lat, lon, type, parent_station=None):
         self.id = id
         self.code = code
         self.name = name
         self.desc = desc
+        self.geometry = WKTSpatialElement("POINT({} {})".format(lat, lon))
         self.lat = lat
         self.lon = lon
         self.type = type
@@ -153,8 +156,8 @@ class Trip(db.Model):
 
 class Transfer(db.Model):
 
-    from_stop_id = db.Column(db.Integer, primary_key=True)
-    to_stop_id = db.Column(db.Integer, primary_key=True)
+    from_stop_id = db.Column(db.BigInteger, primary_key=True)
+    to_stop_id = db.Column(db.BigInteger, primary_key=True)
     type = db.Column(db.Integer)
     min_transfer_time = db.Column(db.Integer) #in seconds?
 

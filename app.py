@@ -5,6 +5,8 @@ from models import *
 
 from flask import jsonify, render_template, request
 
+from sqlalchemy import or_
+
 def toDictList(list):
     return [e.toDict() for e in list]
 
@@ -50,10 +52,15 @@ def api_stops():
     bbox = request.args.get('bbox')
     if bbox:
         east, north, west, south = bbox.split(",")
-        stops = Stop.query.filter(
-            Stop.lon.between(float(east),float(west)),
-            Stop.lat.between(float(north), float(south)),
-                ).limit(500)
+        #stops = Stop.query.filter(
+        #    Stop.lon.between(float(east),float(west)),
+        #    Stop.lat.between(float(north), float(south)),
+        #        ).limit(500)
+        #TODO remove sql injection?
+        bbox = "POLYGON(({} {}, {} {}, {} {}, {} {}, {} {}))".format(north, east, \
+                north, west, south, west, south, east, north, east)
+        app.logger.debug(bbox)
+        stops = Stop.query.filter(Stop.geometry.intersects(bbox))
     else:
         stops = Stop.query.all().limt(100)
 
@@ -90,7 +97,7 @@ def api_trips_id(id):
     else:
         return jsonify(error="Stop not found."), 404
 
-# transfer
+# transfers
 
 @app.route('/api/transfers')
 def api_transfer():
@@ -106,7 +113,28 @@ def api_transfer_from_to(from_stop_id, to_stop_id):
     else:
         return jsonify(error="Transfer not found."), 404
 
+# routes
 
+@app.route('/api/routes')
+def api_routes():
+    routes = None
+    q = request.args.get('q')
+    if q:
+        routes = Route.query.filter(or_( \
+            Route.short_name.like("%" + q + "%"),
+            Route.long_name.like("%" + q + "%")
+            )).all()
+    else:
+        routes = Route.query.all()
+    return jsonify(routes = toDictList(routes))
+
+@app.route('/api/routes/<int:id>')
+def api_routes_id(id):
+    route = Route.query.filter(Route.id == id).first()
+    if route:
+        return jsonify(route.toDict())
+    else:
+        return jsonify(error="Stop not found."), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
