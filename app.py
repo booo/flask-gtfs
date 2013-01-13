@@ -25,6 +25,10 @@ def index():
 def agencies():
     return render_template("agencies.html")
 
+@app.route("/routes")
+def routes():
+    return render_template("routes.html")
+
 # api
 
 # agencies
