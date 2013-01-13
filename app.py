@@ -25,6 +25,11 @@ def index():
 def agencies():
     return render_template("agencies.html")
 
+@app.route("/agencies/<int:id>")
+def agencies_id(id):
+    agency = Agency.query.get_or_404(id)
+    return render_template("agency.html", agency = agency)
+
 @app.route("/routes")
 def routes():
     return render_template("routes.html")
