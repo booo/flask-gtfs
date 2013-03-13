@@ -34,6 +34,10 @@ def agencies_id(id):
 def routes():
     return render_template("routes.html")
 
+@app.route("/linegraph")
+def linegraph():
+    return render_template("linegraph.html")
+
 # api
 
 # agencies
