@@ -208,5 +208,15 @@ def api_route_id_stops(trip_id):
     else:
         return jsonify(error="Nothing found"), 404
 
+@app.route('/api/trips/<int:trip_id>/stops')
+def api_trips_id_stops(trip_id):
+    stop_times = StopTime.query.filter(StopTime.trip_id == trip_id).all()
+    stop_ids = [stop.stop_id for stop in stop_times]
+    stops = Stop.query.filter(Stop.id.in_(stop_ids))
+    if stops:
+        return jsonify(stops=toDictList(stops))
+    else:
+        return jsonify(error="Nothing found"), 404
+
 if __name__ == '__main__':
     app.run(debug=True)
