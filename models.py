@@ -191,6 +191,15 @@ class StopTime(db.Model):
         self.stop_id = stop_id
         self.stop_sequence = stop_sequence
 
+    def toDict(self):
+        return {
+                'trip_id': self.trip_id,
+                'arrival_time': self.arrival_time,
+                'departure_time': self.departure_time,
+                'stop_id': self.stop_id,
+                'stop_sequence': self.stop_sequence
+                }
+
 
 class Shape(db.Model):
 
