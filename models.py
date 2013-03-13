@@ -175,12 +175,13 @@ class Transfer(db.Model):
                 'min_transfer_time': self.min_transfer_time
                }
 
+
 class StopTime(db.Model):
 
-    trip_id = db.Column(db.Integer, primary_key=True)
-    arrival_time = db.Column(db.String(6))
-    departure_time = db.Column(db.String(6))
-    stop_id = db.Column(db.Integer, primary_key=True)
+    trip_id = db.Column(db.BigInteger, primary_key=True)
+    arrival_time = db.Column(db.String(8))
+    departure_time = db.Column(db.String(8))
+    stop_id = db.Column(db.BigInteger, primary_key=True)
     stop_sequence = db.Column(db.Integer, primary_key=True)
 
     def __init__(self, trip_id, arrival_time, departure_time, stop_id, stop_sequence):

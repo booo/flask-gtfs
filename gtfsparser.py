@@ -102,6 +102,7 @@ class TripParser(object):
                 yield Trip(route_id, service_id, id, headsign, short_name, \
                         direction_id, block_id, shape_id)
 
+
 class TransferParser(object):
 
     def __init__(self, filename):
@@ -119,6 +120,7 @@ class TransferParser(object):
                 yield Transfer(from_stop_id, to_stop_id, type, \
                         min_transfer_time)
 
+
 class StopTimeParser(object):
 
     def __init__(self, filename):
@@ -132,12 +134,15 @@ class StopTimeParser(object):
             for line in reader:
                 trip_id, arrival_time, departure_time, stop_id, stop_sequence \
                         = line
+                stop_id = stringToInt(stop_id)
+                trip_id = stringToInt(trip_id)
+                #hours, minutes, seconds = arrival_time.split(":")
                 #arrival_time = datetime.strptime(arrival_time, \
                 #        '%H:%M:%S').time()
                 #departure_time = datetime.strptime(departure_time, \
                 #        "%H:%M:%S").time()
                 yield StopTime(trip_id, arrival_time, departure_time, stop_id, \
-                        stop_sequence)
+                               stop_sequence)
 
 def pointsToLineString(points):
     return "LINESTRING({})".format(
