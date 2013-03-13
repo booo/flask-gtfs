@@ -180,6 +180,7 @@ def api_routes():
         routes = Route.query.all()
     return jsonify(routes = toDictList(routes))
 
+
 @app.route('/api/routes/<int:id>')
 def api_routes_id(id):
     route = Route.query.filter(Route.id == id).first()
@@ -187,6 +188,17 @@ def api_routes_id(id):
         return jsonify(route.toDict())
     else:
         return jsonify(error="Stop not found."), 404
+
+
+@app.route('/api/routes/<int:id>/trips')
+def api_route_id_trips(id):
+    trips = Trip.query.filter(Trip.route_id == id).all()
+    if trips:
+        #return str(toDictList(trips))
+        return jsonify(trips=toDictList(trips))
+    else:
+        return jsonify(error="Nothing found."), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
