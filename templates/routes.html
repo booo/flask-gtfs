@@ -1,20 +1,12 @@
-<html>
+{% extends "agencies.html" %}
 
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js"></script>
-<script type="text/javascript" charset="utf-8" src="./static/js/routes.js"></script>
+{% block title %} Routes {% endblock %}
 
-<style>
-html, body {
-    margin: 0;
-    padding: 0;
-}
-
-</style>
-</head>
+{% block scripts %}
+<script type="text/javascript" charset="utf-8"
+  src="./static/js/routes.js"></script>
+{% endblock %}
+{% block body %}
 <body onload="onLoad()">
 
     <table>
@@ -22,5 +14,5 @@ html, body {
         <tbody></tbody>
     </table>
 
-</body>
-</html>
+  </body>
+  {% endblock %}
