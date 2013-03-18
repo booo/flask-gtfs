@@ -21,6 +21,15 @@ def toGeoJSONFeatureCollectionDict(features):
 def index():
     return render_template("map.html")
 
+@app.route("/trips")
+def trips():
+    return render_template("trips.html")
+
+@app.route("/trips/<int:id>")
+def trip(id):
+    trip = Trip.query.get_or_404(id)
+    return render_template("trip.html", trip = trip)
+
 @app.route("/agencies")
 def agencies():
     return render_template("agencies.html")
@@ -33,6 +42,11 @@ def agencies_id(id):
 @app.route("/routes")
 def routes():
     return render_template("routes.html")
+
+@app.route("/routes/<int:id>")
+def route(id):
+    route = Route.query.get_or_404(id)
+    return render_template("route.html", route = route)
 
 @app.route("/linegraph")
 def linegraph():
